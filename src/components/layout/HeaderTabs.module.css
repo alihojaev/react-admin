@@ -1,0 +1,31 @@
+.header {
+  padding-top: var(--mantine-spacing-sm);
+  background-color: white;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.mainSection {
+  padding-bottom: var(--mantine-spacing-sm);
+  padding-right: 0;
+}
+
+.user {
+  color: var(--mantine-color-black);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 100ms ease;
+}
+
+.user:hover {
+  background-color: var(--mantine-color-white);
+}
+
+.userActive {
+  background-color: var(--mantine-color-white);
+}
+
+@media (max-width: 576px) {
+  .user {
+    display: none;
+  }
+} 

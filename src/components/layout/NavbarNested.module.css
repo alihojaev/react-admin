@@ -1,0 +1,32 @@
+.navbar {
+  background-color: white;
+  height: 100vh;
+  width: 300px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--mantine-color-gray-3);
+}
+
+.header {
+  padding: var(--mantine-spacing-md);
+  color: var(--mantine-color-gray-9);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.links {
+  flex: 1;
+  padding: var(--mantine-spacing-md);
+}
+
+.linksInner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer {
+  margin-left: calc(var(--mantine-spacing-md) * -1);
+  margin-right: calc(var(--mantine-spacing-md) * -1);
+  border-top: 1px solid var(--mantine-color-gray-3);
+} 

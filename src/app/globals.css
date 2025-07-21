@@ -1,0 +1,40 @@
+@import "tailwind-preset-mantine";
+@import "./theme.css";
+
+/* Убираем синюю обводку при наведении на поля ввода */
+input:focus,
+input:hover,
+textarea:focus,
+textarea:hover,
+select:focus,
+select:hover {
+  outline: none !important;
+  border-color: inherit !important;
+  box-shadow: none !important;
+}
+
+/* Убираем синюю обводку для Mantine компонентов */
+.mantine-TextInput-input:focus,
+.mantine-TextInput-input:hover,
+.mantine-PasswordInput-input:focus,
+.mantine-PasswordInput-input:hover,
+.mantine-Select-input:focus,
+.mantine-Select-input:hover,
+.mantine-Textarea-input:focus,
+.mantine-Textarea-input:hover {
+  outline: none !important;
+  border-color: inherit !important;
+  box-shadow: none !important;
+}
+
+/* Убираем синюю обводку для всех инпутов */
+*:focus {
+  outline: none !important;
+}
+
+/* Убираем синюю обводку для кнопок */
+button:focus,
+button:hover {
+  outline: none !important;
+  box-shadow: none !important;
+}
