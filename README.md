@@ -8,6 +8,7 @@
 - Landing: [landing.code-lab.pro](https://landing.code-lab.pro)
 - Dashboard: [dashboard.code-lab.pro](https://dashboard.code-lab.pro/)
 - Support: [support.code-lab.pro](https://support.code-lab.pro)
+- Support Project: [support.code-lab.pro/support/project](https://support.code-lab.pro/support/project/)
 
 (login: admin, pass: 123)
 
