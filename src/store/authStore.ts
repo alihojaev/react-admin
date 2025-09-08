@@ -14,9 +14,7 @@ const updateHttpClient = async () => {
   // Принудительно пересоздаем HTTP клиент с новыми заголовками
   if (typeof window !== 'undefined') {
     try {
-      console.log('Updating HTTP client...');
       const token = Http.getCurrentToken();
-      console.log('Current token:', token);
       
       // Обновляем API экземпляр в authService
       authService.updateApi();
@@ -24,7 +22,6 @@ const updateHttpClient = async () => {
       // Небольшая задержка для полной инициализации HTTP клиента
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      console.log('HTTP client updated with new token');
     } catch (error) {
       console.error('Failed to update HTTP client:', error);
     }
@@ -69,8 +66,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
               isInitialized: true
             });
-          } catch (userError) {
-            console.warn('Could not get current user, but login was successful:', userError);
+          } catch (_userError) {
             // Создаем временного пользователя на основе credentials
             const tempUser: User = {
               id: 'temp',

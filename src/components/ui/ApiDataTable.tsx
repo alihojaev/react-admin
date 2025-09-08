@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import cx from 'clsx';
 import { IconChevronDown, IconChevronUp, IconSearch, IconSelector, IconPlus, IconDots, IconEdit, IconTrash, IconFilter, IconSettings, IconX, IconDownload } from '@tabler/icons-react';
@@ -50,6 +51,7 @@ interface Column {
   sortable?: boolean;
   width?: string | number;
   align?: 'left' | 'center' | 'right';
+  value?: (item: RowData) => any;
 }
 
 interface ApiDataTableProps {
@@ -64,6 +66,7 @@ interface ApiDataTableProps {
     onClick: () => void;
   };
   showSettingsButton?: boolean;
+  showExportButton?: boolean;
   actions?: {
     edit?: (row: RowData) => void;
     delete?: (row: RowData) => void;
@@ -124,6 +127,7 @@ export function ApiDataTable({
   itemsPerPage = 10,
   addButton,
   showSettingsButton = false,
+  showExportButton = true,
   actions,
   searchPlaceholder = "Search by any field",
   emptyMessage = "Нет записей для отображения",
@@ -338,7 +342,7 @@ export function ApiDataTable({
       setLoading(false);
       dataLoadingRef.current = false;
     }
-  }, [apiMethod, searchQuery, currentPage, currentItemsPerPage, sortBy, reverseSortDirection, filters, availableFields, fieldsLoaded, onDataLoaded]);
+  }, [apiMethod, searchQuery, currentPage, currentItemsPerPage, sortBy, reverseSortDirection, filters.length, availableFields.length, fieldsLoaded, onDataLoaded]);
 
   // Загружаем поля при монтировании компонента
   useLayoutEffect(() => {
@@ -352,11 +356,11 @@ export function ApiDataTable({
     if (availableFields.length > 0 && fieldsLoaded && !dataLoadingRef.current) {
       loadData();
     }
-  }, [searchQuery, currentPage, currentItemsPerPage, sortBy, reverseSortDirection, filters, availableFields.length, fieldsLoaded, loadData]);
+  }, [searchQuery, currentPage, currentItemsPerPage, sortBy, reverseSortDirection, filters.length, availableFields.length, fieldsLoaded, loadData]);
 
   // Обновляем данные при изменении refreshTrigger
   useEffect(() => {
-    if (refreshTrigger && availableFields.length > 0 && fieldsLoaded && !dataLoadingRef.current) {
+    if (refreshTrigger !== undefined && refreshTrigger > 0 && availableFields.length > 0 && fieldsLoaded && !dataLoadingRef.current) {
       loadData();
     }
   }, [refreshTrigger, availableFields.length, fieldsLoaded, loadData]);
@@ -408,7 +412,7 @@ export function ApiDataTable({
     <Table.Tr key={row.id}>
       {columns.map((column) => (
         <Table.Td key={column.key} style={{ textAlign: column.align || 'left' }}>
-          {row[column.key]}
+          {column.value ? column.value(row) : (row[column.key] ?? '')}
         </Table.Td>
       ))}
       {actions && (
@@ -508,14 +512,16 @@ export function ApiDataTable({
         const match = disposition.match(/filename=\"(.+?)\"/);
         if (match) fileName = match[1];
       }
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      }
     } catch (e) {
       alert('Ошибка скачивания отчёта: ' + (e as Error).message);
     }
@@ -595,7 +601,10 @@ export function ApiDataTable({
       
       <div style={{ border: '1px solid var(--mantine-color-gray-3)', borderRadius: 'var(--mantine-radius-sm)' }}>
         <ScrollArea 
-          h={Math.max(data.length * 50 + 40, 100)} 
+          h={Math.min(
+            Math.max(data.length * 50 + 50, 100),
+            typeof window !== 'undefined' ? window.innerHeight * 0.6 : 400
+          )} 
           onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
         >
           <Table horizontalSpacing="md" verticalSpacing="xs" miw={800} layout="fixed">
@@ -620,18 +629,20 @@ export function ApiDataTable({
                   )
                 ))}
                 {(addButtonWithDefaultLabel || showSettingsButton) && (
-                  <Table.Th style={{ textAlign: 'end', width: showSettingsButton ? 200 : 133 }}>
+                  <Table.Th style={{ textAlign: 'end', width: showSettingsButton ? 200 : 160 }}>
                     <Group gap="xs" justify="flex-end">
                       {/* Кнопка скачать CSV */}
-                      <Tooltip label="Скачать CSV" withArrow>
-                        <ActionIcon 
-                          variant="light" 
-                          size="md"
-                          onClick={handleDownloadCsv}
-                        >
-                          <IconDownload size={20} />
-                        </ActionIcon>
-                      </Tooltip>
+                      {showExportButton && (
+                        <Tooltip label="Скачать CSV" withArrow>
+                          <ActionIcon 
+                            variant="light" 
+                            size="md"
+                            onClick={handleDownloadCsv}
+                          >
+                            <IconDownload size={20} />
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
                       {showSettingsButton && (
                         <ActionIcon 
                           variant="light" 

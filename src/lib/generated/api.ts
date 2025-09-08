@@ -106,12 +106,16 @@ export class AuthApi {
       return c.delete(`/api/role?roleId=${roleId}`)
     },
 
-    findAllRsql(query: string, page?: number, size?: number, sort?: string) {
-      return c.get(`/api/role/rsql?query=${query}&page=${page ? page : 0}&size=${size ? size : 10}&sort=${sort ? sort : 'cdt,desc'}`)
+    getFields() {
+      return c.get(`/api/role/fields`)
     },
 
     list() {
       return c.get(`/api/role`)
+    },
+
+    listAll(query: string, page?: number, size?: number, sort?: string) {
+      return c.get(`/api/role/rsql?query=${query}&page=${page ? page : 0}&size=${size ? size : 10}&sort=${sort ? sort : 'cdt,desc'}`)
     },
 
     listPermissions() {

@@ -436,11 +436,46 @@ export const CustomForm: React.FC<CustomFormProps> = ({
             {titleElement}
             <MultiSelect
               {...commonProps}
-              data={value.items || []}
-              value={Array.isArray(getter(key)) ? getter(key) as string[] : []}
+              data={(value.items || []).filter(item => item && item.value && item.label)}
+              value={(() => {
+                try {
+                  const currentValue = getter(key);
+                  if (!currentValue) return [];
+                  if (Array.isArray(currentValue)) {
+                    // Для authRoles, извлекаем ID из объектов ролей
+                    if (key === 'authRoles') {
+                      return currentValue.map(role => {
+                        if (typeof role === 'object' && role.id) {
+                          return String(role.id);
+                        }
+                        return String(role);
+                      }).filter(Boolean);
+                    }
+                    return currentValue.map(v => String(v)).filter(Boolean);
+                  }
+                  return [];
+                } catch (error) {
+                  console.error('Error processing MultiSelect value:', error);
+                  return [];
+                }
+              })()}
               onChange={(val) => {
-                setter(key, val);
-                handleFieldTouch(key);
+                try {
+                  // Для multiselect с ролями, преобразуем строки обратно в объекты
+                  if (key === 'authRoles' && Array.isArray(val)) {
+                    const roleObjects = val.map(roleId => {
+                      // Находим роль по ID
+                      const role = value.items?.find(item => item.value === roleId);
+                      return role ? { id: role.value, name: role.label } : { id: roleId };
+                    });
+                    setter(key, roleObjects);
+                  } else {
+                    setter(key, val);
+                  }
+                  handleFieldTouch(key);
+                } catch (error) {
+                  console.error('Error processing MultiSelect onChange:', error);
+                }
               }}
               searchable={value.searchable}
               clearable={value.clearable !== false}

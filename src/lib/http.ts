@@ -15,8 +15,6 @@ function create(http: Http) {
 
   const jwt = typeof window !== 'undefined' ? localStorage.getItem(JWT_NAME) : null;
 
-  console.log(jwt)
-
   if (jwt) {
     h.Authorization = `Bearer ${jwt}`;
   }

@@ -6,19 +6,56 @@ export interface User {
   authType: 'EMAIL';
   blocked: boolean;
   lastActivity: string;
+  type?: {
+    value: string;
+    description: string;
+  };
+  authRoles?: Array<{
+    id: string;
+    name: string;
+  }>;
+  cdt?: string;
+}
+
+export interface CreateUserRequest {
+  username: string;
+  password?: string;
+  type?: {
+    value: string;
+  };
+  authRoles?: Array<{
+    id: string;
+  }>;
+}
+
+export interface UpdateUserRequest {
+  id: string;
+  username: string;
+  type?: {
+    value: string;
+  };
+  authRoles?: Array<{
+    id: string;
+  }>;
+}
+
+export interface UpdatePasswordRequest {
+  id: string;
+  password: string;
 }
 
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface AuthResponse {
   token: string;
+  user: User;
 }
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 

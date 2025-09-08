@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import cx from 'clsx';
 import { IconChevronDown, IconChevronUp, IconSearch, IconSelector, IconPlus, IconDots, IconEdit, IconTrash, IconFilter, IconSettings } from '@tabler/icons-react';
@@ -30,6 +31,7 @@ interface Column {
   sortable?: boolean;
   width?: string | number;
   align?: 'left' | 'center' | 'right';
+  value?: (item: any) => any;
 }
 
 interface DataTableProps {
@@ -82,8 +84,8 @@ function filterData(data: RowData[], search: string, columns: Column[]) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
     columns.some((column) => {
-      const value = item[column.key];
-      return value && value.toString().toLowerCase().includes(query);
+      const value = column.value ? column.value(item) : item[column.key];
+      return value != null && value.toString().toLowerCase().includes(query);
     })
   );
 }
@@ -101,14 +103,15 @@ function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      const aValue = a[sortBy];
-      const bValue = b[sortBy];
+      const column = columns.find(col => col.key === sortBy);
+      const aValue = column?.value ? column.value(a) : a[sortBy];
+      const bValue = column?.value ? column.value(b) : b[sortBy];
       
       if (payload.reversed) {
-        return bValue.toString().localeCompare(aValue.toString());
+        return (bValue?.toString() || '').localeCompare(aValue?.toString() || '');
       }
 
-      return aValue.toString().localeCompare(bValue.toString());
+      return (aValue?.toString() || '').localeCompare(bValue?.toString() || '');
     }),
     payload.search,
     columns
@@ -137,7 +140,6 @@ export function DataTable({
   const [currentItemsPerPage, setCurrentItemsPerPage] = useState(itemsPerPage);
 
   const handleSettingsClick = () => {
-    console.log('Settings button clicked');
     // Здесь будет внутренняя логика настроек
   };
 
@@ -166,7 +168,7 @@ export function DataTable({
     <Table.Tr key={row.id}>
       {columns.map((column) => (
         <Table.Td key={column.key} style={{ textAlign: column.align || 'left' }}>
-          {row[column.key]}
+          {column.value ? column.value(row) : (row[column.key] ?? '')}
         </Table.Td>
       ))}
       {actions && (
@@ -217,7 +219,7 @@ export function DataTable({
       
       <div style={{ border: '1px solid var(--mantine-color-gray-3)', borderRadius: 'var(--mantine-radius-sm)' }}>
         <ScrollArea 
-          h={Math.min(sortedData.length * 50 + 40, window.innerHeight - 320)} 
+          h={Math.min(sortedData.length * 50 + 40, typeof window !== 'undefined' ? window.innerHeight - 320 : 400)} 
           onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
         >
           <Table horizontalSpacing="md" verticalSpacing="xs" miw={800} layout="fixed">

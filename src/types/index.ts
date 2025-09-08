@@ -55,4 +55,7 @@ export interface MenuItem {
 
 export interface MenuResponse {
   items: MenuItem[];
-} 
+}
+
+// Экспорт типов для ролей
+export * from './role'; 

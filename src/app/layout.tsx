@@ -19,10 +19,10 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
       </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         <MantineProvider theme={theme}>
           <Providers>
             {children}

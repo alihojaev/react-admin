@@ -33,12 +33,9 @@ class AuthServiceImpl implements AuthService {
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      console.log('Attempting login with credentials:', credentials);
       
       // Используем правильный endpoint для авторизации
       const response = await this.publicApi.auth.login(credentials);
-      
-      console.log('Login response:', response);
       
       if (!response) {
         throw new Error('No response from server');
@@ -53,11 +50,9 @@ class AuthServiceImpl implements AuthService {
       }
       
       if (!responseData.token) {
-        console.error('Response without token:', responseData);
         throw new Error('No token in response');
       }
       
-      console.log('Login successful, returning data:', responseData);
       return responseData;
     } catch (error) {
       console.error('Login error:', error);
@@ -87,19 +82,14 @@ class AuthServiceImpl implements AuthService {
 
   async getCurrentUser(): Promise<User> {
     try {
-      console.log('Getting current user...');
       const token = Http.getCurrentToken();
-      console.log('Token in getCurrentUser:', token);
       
       // Проверяем, что HTTP клиент обновлен
       if (token && !Http.isLoggedIn()) {
-        console.log('HTTP client not logged in, updating...');
         Http.updateAllClients(token);
       }
       
       const response = await this.api.admin.current();
-      
-      console.log('Current user raw response:', response);
       
       if (!response) {
         throw new Error('No response from server');
@@ -109,11 +99,8 @@ class AuthServiceImpl implements AuthService {
       const responseData = response.data || response;
       
       if (!responseData) {
-        console.error('Response without data:', response);
         throw new Error('Invalid response format');
       }
-      
-      console.log('Current user response data:', responseData);
       return responseData;
     } catch (error) {
       console.error('getCurrentUser error:', error);

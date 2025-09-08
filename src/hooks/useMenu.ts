@@ -15,7 +15,6 @@ export function useMenu() {
         setError(null);
         
         const response = await api.menu.menu();
-        console.log('Menu API response:', response);
         
         // API может возвращать данные напрямую или в поле data
         const data = response.data || response;
@@ -25,7 +24,6 @@ export function useMenu() {
         } else if (data && data.items && Array.isArray(data.items)) {
           setMenuItems(data.items);
         } else {
-          console.warn('Unexpected menu response format:', data);
           setMenuItems([]);
         }
       } catch (err) {

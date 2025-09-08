@@ -16,27 +16,21 @@ export function useTheme() {
   }, []);
 
   const toggleColorScheme = () => {
-    console.log('toggleColorScheme called, mounted:', mounted);
     if (!mounted) {
-      console.log('Not mounted, returning');
       return;
     }
     
     const newScheme = colorScheme === 'light' ? 'dark' : 'light';
-    console.log('New scheme will be:', newScheme);
     setColorScheme(newScheme);
     
     // Сохраняем в localStorage
     localStorage.setItem('mantine-color-scheme', newScheme);
-    console.log('Saved to localStorage:', newScheme);
     
     // Обновляем data-mantine-color-scheme атрибут
     document.documentElement.setAttribute('data-mantine-color-scheme', newScheme);
-    console.log('Set data-mantine-color-scheme to:', newScheme);
     
     // Принудительно обновляем CSS переменные
     document.documentElement.style.colorScheme = newScheme;
-    console.log('Set style.colorScheme to:', newScheme);
   };
 
   // Возвращаем светлую тему по умолчанию до монтирования

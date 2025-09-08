@@ -18,6 +18,7 @@ interface Column {
   sortable?: boolean;
   width?: string | number;
   align?: 'left' | 'center' | 'right';
+  value?: (item: any) => any;
 }
 
 interface TableState {
